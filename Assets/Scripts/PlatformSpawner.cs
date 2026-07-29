@@ -5,22 +5,37 @@ public class PlatformSpawner : MonoBehaviour
     [Header("Referencias")]
     [SerializeField] private Transform player;
     [SerializeField] private GameObject[] platformPrefabs;
+
+    [Header("Objetos")]
     [SerializeField] private GameObject leakPrefab;
+    [SerializeField] private GameObject enemyPrefab;
+
+    [Header("Probabilidades")]
+    [Range(0f, 1f)]
+    [SerializeField] private float leakChance = 0.25f;
+
+    [Range(0f, 1f)]
+    [SerializeField] private float enemyChance = 0.20f;
+
+    [Header("Posición de fugas")]
+    [SerializeField] private float leakOffsetY = 0.1f;
+    [SerializeField] private float leakHorizontalMargin = 0.5f;
+
+    [Header("Posición de enemigos")]
+    [SerializeField] private float enemyOffsetY = 0.1f;
+    [SerializeField] private float enemyHorizontalMargin = 0.5f;
 
     [Header("Plataformas")]
     [SerializeField] private float minX = -7f;
     [SerializeField] private float maxX = 7f;
+
     [SerializeField] private float minDistanceY = 2f;
     [SerializeField] private float maxDistanceY = 5f;
+
     [SerializeField] private float maxHorizontalStep = 3f;
+
     [SerializeField] private int initialPlatforms = 20;
     [SerializeField] private float spawnAheadDistance = 35f;
-
-    [Header("Fugas")]
-    [Range(0f, 1f)]
-    [SerializeField] private float leakChance = 0.25f;
-    [SerializeField] private float leakOffsetY = 0.1f;
-    [SerializeField] private float leakHorizontalMargin = 0.5f;
 
     private float nextY;
     private float lastX;
@@ -48,6 +63,7 @@ public class PlatformSpawner : MonoBehaviour
             maxDistanceY
         );
 
+        // 10% de probabilidad de caída larga
         if (Random.value < 0.1f)
         {
             yDistance = Random.Range(6f, 8f);
@@ -73,13 +89,50 @@ public class PlatformSpawner : MonoBehaviour
             Quaternion.identity
         );
 
-        if (leakPrefab != null && Random.value < leakChance)
+        SpawnPlatformObject(platform);
+    }
+
+    private void SpawnPlatformObject(GameObject platform)
+    {
+        float randomValue = Random.value;
+
+        // Primero comprueba si genera una fuga
+        if (
+            leakPrefab != null &&
+            randomValue < leakChance
+        )
         {
-            SpawnLeak(platform);
+            SpawnObjectOnPlatform(
+                platform,
+                leakPrefab,
+                leakOffsetY,
+                leakHorizontalMargin
+            );
+
+            return;
+        }
+
+        // Si no generó fuga, comprueba el enemigo
+        if (
+            enemyPrefab != null &&
+            randomValue < leakChance + enemyChance
+        )
+        {
+            SpawnObjectOnPlatform(
+                platform,
+                enemyPrefab,
+                enemyOffsetY,
+                enemyHorizontalMargin
+            );
         }
     }
 
-    private void SpawnLeak(GameObject platform)
+    private void SpawnObjectOnPlatform(
+        GameObject platform,
+        GameObject objectPrefab,
+        float offsetY,
+        float horizontalMargin
+    )
     {
         Collider2D platformCollider =
             platform.GetComponentInChildren<Collider2D>();
@@ -91,27 +144,29 @@ public class PlatformSpawner : MonoBehaviour
 
         float minimumX =
             platformCollider.bounds.min.x +
-            leakHorizontalMargin;
+            horizontalMargin;
 
         float maximumX =
             platformCollider.bounds.max.x -
-            leakHorizontalMargin;
+            horizontalMargin;
 
-        float randomX = platformCollider.bounds.center.x;
+        float randomX =
+            platformCollider.bounds.center.x;
 
         if (minimumX < maximumX)
         {
-            randomX = Random.Range(minimumX, maximumX);
+            randomX = Random.Range(
+                minimumX,
+                maximumX
+            );
         }
 
         float y =
             platformCollider.bounds.max.y +
-            leakOffsetY;
+            offsetY;
 
-        // Solo genera la fuga.
-        // No necesita saber si tiene un script Leak.
         Instantiate(
-            leakPrefab,
+            objectPrefab,
             new Vector3(randomX, y, 0f),
             Quaternion.identity
         );
