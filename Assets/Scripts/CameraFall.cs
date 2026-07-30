@@ -1,27 +1,39 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
 public class CameraFall : MonoBehaviour
 {
-    [Header("Gravedad")]
-    [SerializeField] private float initialGravityScale = 0.01f;
-    [SerializeField] private float gravityIncreaseRate = 0.001f; // cuánto sube por segundo
-    [SerializeField] private float maxGravityScale = 2f;
+    [Header("Velocidad de caída")]
+    [SerializeField] private float baseFallSpeed = 1f;
+    [SerializeField] private float speedPerPoint = 0.01f;
+    [SerializeField] private float maxFallSpeed = 10f;
 
-    private Rigidbody2D rb;
+    [Header("Frecuencia de recálculo")]
+    [SerializeField] private float updateInterval = 3f;
 
-    private void Awake()
+    private float currentFallSpeed;
+    private float timer;
+
+    private void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        rb.gravityScale = initialGravityScale;
+        currentFallSpeed = baseFallSpeed;
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
-        if (rb.gravityScale < maxGravityScale)
+        timer += Time.deltaTime;
+
+        if (timer >= updateInterval)
         {
-            rb.gravityScale += gravityIncreaseRate * Time.fixedDeltaTime;
-            rb.gravityScale = Mathf.Min(rb.gravityScale, maxGravityScale);
+            timer = 0f;
+            RecalculateSpeed();
         }
+
+        transform.position += Vector3.down * currentFallSpeed * Time.deltaTime;
+    }
+
+    private void RecalculateSpeed()
+    {
+        float targetSpeed = baseFallSpeed + (Leak.TotalPoints * speedPerPoint);
+        currentFallSpeed = Mathf.Min(targetSpeed, maxFallSpeed);
     }
 }
