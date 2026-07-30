@@ -16,15 +16,18 @@ public class AudioManager : MonoBehaviour
         if(Instance == null)
         {
             Instance = this;
-        } else
+            SFX = GetComponentInChildren<SFXManager>();
+            Ambience = GetComponentInChildren<AmbienceManager>();
+
+            DontDestroyOnLoad(gameObject);
+        } 
+        else
         {
             Debug.Log("Cuidado! Más de un AudioManager en escena.");
+            Destroy(gameObject);
         }
         //Simplifies the code to call it from other scripts.
-        SFX = GetComponentInChildren<SFXManager>();
-        Ambience = GetComponentInChildren<AmbienceManager>();
         
-        DontDestroyOnLoad(gameObject);
     }
 
         
