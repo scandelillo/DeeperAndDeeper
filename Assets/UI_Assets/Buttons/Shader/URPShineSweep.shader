@@ -35,6 +35,7 @@ Shader "UI/URPShineSweep"
             float _Speed;
             float _Delay;
             float _Angle;
+            float _UnscaledTime;
 
             struct Attributes
             {
@@ -72,7 +73,7 @@ Shader "UI/URPShineSweep"
                 float cycle = _Speed + _Delay;
 
                 // Tiempo dentro del ciclo
-                float phase = fmod(_Time.y, cycle);
+                float phase = fmod(_UnscaledTime, cycle);
 
                 float shine = 0;
 
