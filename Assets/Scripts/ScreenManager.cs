@@ -9,7 +9,7 @@ public class ScreenManager : MonoBehaviour
     [Header("Panels")]
     [SerializeField] private GameObject panelPause;
     [SerializeField] private GameOverPanel gameOverPanelScript;
-    [SerializeField] private AudioClip touchSound;
+    [SerializeField] private GameObject scorePanel;
 
     private bool isPaused = false;
     private bool isGameOver = false;
@@ -32,6 +32,7 @@ public class ScreenManager : MonoBehaviour
         {
             TogglePause();
         }
+        scorePanel.SetActive(!gameOverPanelScript.gameObject.activeSelf);
     }
 
     public void TogglePause()
@@ -46,7 +47,6 @@ public class ScreenManager : MonoBehaviour
         isPaused = false;
         panelPause.SetActive(false);
         Time.timeScale = 1f;
-        AudioManager.Instance.SFX.Play(touchSound);
     }
 
     public void GameOver(int finalScore)
@@ -54,7 +54,6 @@ public class ScreenManager : MonoBehaviour
         isGameOver = true;
         gameOverPanelScript.Show(finalScore);
         Time.timeScale = 0f;
-        AudioManager.Instance.SFX.Play(touchSound);
     }
 
     public void Restart()
@@ -63,7 +62,6 @@ public class ScreenManager : MonoBehaviour
         isPaused = false;
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        AudioManager.Instance.SFX.Play(touchSound);
     }
 
     public void BackToMenu()
@@ -72,6 +70,5 @@ public class ScreenManager : MonoBehaviour
         isPaused = false;
         Time.timeScale = 1f;
         SceneManager.LoadScene("UI_MainMenu");
-        AudioManager.Instance.SFX.Play(touchSound);
     }
 }
