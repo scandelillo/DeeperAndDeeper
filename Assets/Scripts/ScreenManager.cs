@@ -9,6 +9,7 @@ public class ScreenManager : MonoBehaviour
     [Header("Panels")]
     [SerializeField] private GameObject panelPause;
     [SerializeField] private GameOverPanel gameOverPanelScript;
+    [SerializeField] private GameObject scorePanel;
 
     private bool isPaused = false;
     private bool isGameOver = false;
@@ -31,6 +32,7 @@ public class ScreenManager : MonoBehaviour
         {
             TogglePause();
         }
+        scorePanel.SetActive(!gameOverPanelScript.gameObject.activeSelf);
     }
 
     public void TogglePause()

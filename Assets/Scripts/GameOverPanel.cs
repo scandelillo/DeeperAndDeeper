@@ -8,7 +8,7 @@ public class GameOverPanel : MonoBehaviour
     public void Show(int finalScore)
     {
         gameObject.SetActive(true);
-        scoreText.text = "Puntaje: " + finalScore;
+        scoreText.text = finalScore + "pts";
     }
 
     public void Hide()
