@@ -24,6 +24,18 @@ public class PlayerMovementX : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float groundCheckRadius = 0.15f;
 
+    [Header("Dash")]
+    [SerializeField] private float dashSpeed = 16f;
+    [SerializeField] private float dashDuration = 0.15f;
+    [SerializeField] private float dashCooldown = 1f;
+
+    private bool isDashing;
+    private float dashTimeRemaining;
+    private float dashCooldownRemaining;
+
+    private float dashDirection = 1f;
+    private float lastDirection = 1f;
+
     private void Awake()
     {
         controls = new InputSystem_Actions();
@@ -38,17 +50,21 @@ public class PlayerMovementX : MonoBehaviour
     {
         controls.Player.Enable();
 
-        // Escucha la acción de salto
+        // Salto
         controls.Player.Jump.performed += OnJumpPerformed;
 
-        // Escucha la acción para reparar la fuga
+        // Reparar fugas
         controls.Player.Interact.performed += OnInteractPerformed;
+
+        // Dash usando la acción Sprint, normalmente asignada a Shift
+        controls.Player.Sprint.performed += OnDashPerformed;
     }
 
     private void OnDisable()
     {
         controls.Player.Jump.performed -= OnJumpPerformed;
         controls.Player.Interact.performed -= OnInteractPerformed;
+        controls.Player.Sprint.performed -= OnDashPerformed;
 
         controls.Player.Disable();
     }
@@ -57,17 +73,38 @@ public class PlayerMovementX : MonoBehaviour
     {
         moveInput = controls.Player.Move.ReadValue<Vector2>();
 
+        // Guarda la última dirección horizontal utilizada
+        if (Mathf.Abs(moveInput.x) > 0.1f)
+        {
+            lastDirection = Mathf.Sign(moveInput.x);
+        }
+
         isGrounded = Physics2D.OverlapCircle(
             groundCheck.position,
             groundCheckRadius,
             groundLayer
         );
+
+        UpdateDashTimers();
     }
 
     private void FixedUpdate()
     {
+        float horizontalVelocity;
+
+        if (isDashing)
+        {
+            horizontalVelocity = dashDirection * dashSpeed;
+        }
+        else
+        {
+            horizontalVelocity = moveInput.x * moveSpeed;
+        }
+
+        // Solo cambia la velocidad horizontal.
+        // Conserva la velocidad vertical.
         body.linearVelocity = new Vector2(
-            moveInput.x * moveSpeed,
+            horizontalVelocity,
             body.linearVelocity.y
         );
 
@@ -82,6 +119,24 @@ public class PlayerMovementX : MonoBehaviour
         }
     }
 
+    private void UpdateDashTimers()
+    {
+        if (dashCooldownRemaining > 0f)
+        {
+            dashCooldownRemaining -= Time.deltaTime;
+        }
+
+        if (isDashing)
+        {
+            dashTimeRemaining -= Time.deltaTime;
+
+            if (dashTimeRemaining <= 0f)
+            {
+                isDashing = false;
+            }
+        }
+    }
+
     private void OnJumpPerformed(
         InputAction.CallbackContext context
     )
@@ -92,7 +147,36 @@ public class PlayerMovementX : MonoBehaviour
         }
     }
 
-    // Se ejecuta cuando se presiona la acción Interact
+    private void OnDashPerformed(
+        InputAction.CallbackContext context
+    )
+    {
+        // No permite usar el dash mientras está en cooldown
+        if (dashCooldownRemaining > 0f || isDashing)
+        {
+            return;
+        }
+
+        // Lee la dirección que se está presionando
+        float horizontalInput =
+            controls.Player.Move.ReadValue<Vector2>().x;
+
+        if (Mathf.Abs(horizontalInput) > 0.1f)
+        {
+            dashDirection = Mathf.Sign(horizontalInput);
+            lastDirection = dashDirection;
+        }
+        else
+        {
+            // Si no hay dirección, usa la última
+            dashDirection = lastDirection;
+        }
+
+        isDashing = true;
+        dashTimeRemaining = dashDuration;
+        dashCooldownRemaining = dashCooldown;
+    }
+
     private void OnInteractPerformed(
         InputAction.CallbackContext context
     )
@@ -103,14 +187,10 @@ public class PlayerMovementX : MonoBehaviour
             return;
         }
 
-        // Llama al método Repair del script Leak
         nearbyLeak.Repair();
-
-        // La fuga acaba de destruirse
         nearbyLeak = null;
     }
 
-    // Detecta cuando el jugador entra al área de la fuga
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Leak leak = collision.GetComponentInParent<Leak>();
@@ -125,7 +205,6 @@ public class PlayerMovementX : MonoBehaviour
         }
     }
 
-    // Detecta cuando el jugador se aleja de la fuga
     private void OnTriggerExit2D(Collider2D collision)
     {
         Leak leak = collision.GetComponentInParent<Leak>();
