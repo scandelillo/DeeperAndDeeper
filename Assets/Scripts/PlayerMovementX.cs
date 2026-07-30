@@ -9,6 +9,13 @@ public class PlayerMovementX : MonoBehaviour
     [Header("Referencias")]
     [SerializeField] private Rigidbody2D body;
 
+
+
+    [Header("Sprites")]
+    [SerializeField] private Sprite idleSprite;
+    [SerializeField] private Sprite jumpSprite;
+
+
     private InputSystem_Actions controls;
     private Vector2 moveInput;
 
@@ -39,6 +46,10 @@ public class PlayerMovementX : MonoBehaviour
     private float dashDirection = 1f;
     private float lastDirection = 1f;
 
+
+    [SerializeField] private SpriteRenderer spriteRenderer;
+
+   
     private void Awake()
     {
         controls = new InputSystem_Actions();
@@ -47,6 +58,7 @@ public class PlayerMovementX : MonoBehaviour
         {
             body = GetComponent<Rigidbody2D>();
         }
+   
     }
 
     private void OnEnable()
@@ -87,6 +99,15 @@ public class PlayerMovementX : MonoBehaviour
             groundCheckRadius,
             groundLayer
         );
+
+        if (isGrounded)
+        {
+            spriteRenderer.sprite = idleSprite;
+        }
+        else
+        {
+            spriteRenderer.sprite = jumpSprite;
+        }
 
         UpdateDashTimers();
     }
