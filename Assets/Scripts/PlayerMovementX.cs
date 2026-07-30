@@ -3,6 +3,9 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovementX : MonoBehaviour
 {
+
+    [SerializeField] private AudioClip jumpSound;
+
     [Header("Referencias")]
     [SerializeField] private Rigidbody2D body;
 
@@ -144,6 +147,7 @@ public class PlayerMovementX : MonoBehaviour
         if (isGrounded)
         {
             jumpRequested = true;
+            AudioManager.Instance.SFX.Play(jumpSound);
         }
     }
 

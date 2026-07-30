@@ -2,6 +2,11 @@ using UnityEngine;
 
 public class PlatformSpawner : MonoBehaviour
 {
+
+    [Header("Sounds")]
+    [SerializeField] private AudioClip steamSound;
+    [SerializeField] private AudioClip ratSound;
+
     [Header("Referencias")]
     [SerializeField] private Transform player;
     [SerializeField] private GameObject[] platformPrefabs;
@@ -106,7 +111,9 @@ public class PlatformSpawner : MonoBehaviour
                 platform,
                 leakPrefab,
                 leakOffsetY,
-                leakHorizontalMargin
+                leakHorizontalMargin,
+                steamSound
+
             );
 
             return;
@@ -122,7 +129,8 @@ public class PlatformSpawner : MonoBehaviour
                 platform,
                 enemyPrefab,
                 enemyOffsetY,
-                enemyHorizontalMargin
+                enemyHorizontalMargin,
+                ratSound
             );
         }
     }
@@ -131,7 +139,9 @@ public class PlatformSpawner : MonoBehaviour
         GameObject platform,
         GameObject objectPrefab,
         float offsetY,
-        float horizontalMargin
+        float horizontalMargin,
+        AudioClip steamSound
+
     )
     {
         Collider2D platformCollider =
@@ -170,5 +180,6 @@ public class PlatformSpawner : MonoBehaviour
             new Vector3(randomX, y, 0f),
             Quaternion.identity
         );
+        AudioManager.Instance.SFX.Play(steamSound);
     }
 }

@@ -159,6 +159,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 470dd1a370dfc0b4788d669abe94f71c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
+  damageSound: {fileID: 8300000, guid: daf60dabd0011e54a8053df602066f2b, type: 3}
   pointsLost: 50
 --- !u!114 &4284804153236544980
 MonoBehaviour:

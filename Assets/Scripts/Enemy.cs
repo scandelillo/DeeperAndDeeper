@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    [SerializeField] private AudioClip damageSound;
     [SerializeField] private int pointsLost = 50;
 
     private bool alreadyHit;
@@ -18,6 +19,7 @@ public class Enemy : MonoBehaviour
             alreadyHit = true;
 
             Leak.ChangePoints(-pointsLost);
+            AudioManager.Instance.SFX.Play(damageSound);
 
             Debug.Log(
                 "Tocaste un enemigo. Pierdes " +

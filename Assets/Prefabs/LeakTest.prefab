@@ -123,6 +123,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Leak
   points: 100
+  successSound: {fileID: 8300000, guid: 7bd6b897eb5ca4b7d88a205c4a51640c, type: 3}
 --- !u!60 &3459776074972812810
 PolygonCollider2D:
   m_ObjectHideFlags: 0
