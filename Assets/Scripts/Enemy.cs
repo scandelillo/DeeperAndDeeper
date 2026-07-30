@@ -3,6 +3,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private int pointsLost = 50;
+    [SerializeField] private AudioClip damageSound;
 
     private CameraFall cameraFall;
     private bool alreadyHit;
@@ -41,7 +42,7 @@ public class Enemy : MonoBehaviour
                 pointsLost +
                 " puntos "
             );
-
+            AudioManager.Instance.SFX.Play(damageSound);
             Destroy(gameObject);
         }
     }
