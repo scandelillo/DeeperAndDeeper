@@ -12,6 +12,6 @@ public class ScoreUI : MonoBehaviour
 
     private void Update()
     {
-        scoreText.text = "Puntos: " + Leak.TotalPoints;
+        scoreText.text = Leak.TotalPoints + " pts";
     }
 }
