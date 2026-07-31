@@ -61,7 +61,9 @@ public class ScreenManager : MonoBehaviour
         isGameOver = false;
         isPaused = false;
         Time.timeScale = 1f;
+        Leak.ResetPoints();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
     }
 
     public void BackToMenu()
@@ -69,6 +71,7 @@ public class ScreenManager : MonoBehaviour
         isGameOver = false;
         isPaused = false;
         Time.timeScale = 1f;
+        Leak.ResetPoints();
         SceneManager.LoadScene("UI_MainMenu");
     }
 }

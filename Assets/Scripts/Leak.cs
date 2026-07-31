@@ -6,6 +6,7 @@ public class Leak : MonoBehaviour
     [SerializeField] private AudioClip successSound;
 
     public static int TotalPoints { get; private set; }
+    
 
     public void Repair()
     {
@@ -21,5 +22,10 @@ public class Leak : MonoBehaviour
 
         Debug.Log("Puntos totales: " + TotalPoints);
         
+    }
+
+    public static void ResetPoints()
+    {
+        TotalPoints = 0;
     }
 }

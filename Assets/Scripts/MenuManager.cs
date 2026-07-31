@@ -17,6 +17,7 @@ public class MenuManager : MonoBehaviour
 
     public void Play()
     {
+        Leak.ResetPoints();
         SceneManager.LoadScene(gameSceneName);
         AudioManager.Instance.SFX.Play(touchSound);
     }
